@@ -29,3 +29,14 @@ class CharacteristicValues:
     def is_sick(self) -> bool:
 
         return self.sick
+
+    def to_string(self) -> str:
+
+        return f"""
+        ******************************
+        Pacjent nr {self.id}
+        A_P: {self.A_P:.3f},\tA_QRS: {self.A_QRS:.3f},\tA_T: {self.A_T:.3f},
+        T_P: {self.T_P:.3f},\tT_QRS: {self.T_QRS:.3f},\tT_T: {self.T_T:.3f},
+        F: {self.F_max:.3f},\tF_width: {self.F_width:.3f},
+        Pacjent w rzeczywistości chory? {self.sick}.
+        """

@@ -1,5 +1,8 @@
 from experiment import Experiment
 
+import argparse
+import logging
+
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,25 +11,21 @@ if __name__ == "__main__":
 
     experiment = Experiment()
 
+    # Parametry wywołania:
+    parser = argparse.ArgumentParser(description="klasyfikacja EKG pacjentów z bazy MIT-BIH.")
+    parser.add_argument('-i', '--image', action='store_true', help="użyj ekstrakcji cech z obrazu zamiast danych od czasu.")
+    parser.add_argument('-n', '--normalize', action='store_true', help="normalizuj wartości na wykresach.")
+    parser.add_argument('-k', '--knn', type=int, default=5, help="parametr k dla algorytmu k-NN.")
+    parser.add_argument('-v', '--verbose', action='store_true', help="więcej komunikatów tekstowych.")
+    args = parser.parse_args()
+
     records_files = glob.glob("./dataset/*.hea")
+
+    experiment.FLAG_IMAGE = args.image
+    experiment.FLAG_NORMALIZE = args.normalize
+    experiment.FLAG_K = args.knn
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG)
+
     experiment.read_dataset(records_files)
-
-    """
-    # Rysowanie wykresu
-    plt.figure(figsize=(12, 6))
-    #for i, channel_name in enumerate(channel_names[:2]):  # Rysujemy dwa pierwsze kanały
-    plt.plot(time, signals[:, 0])
-
-    # Dostosowanie wykresu
-    plt.title("Sygnały z PhysioNet")
-    plt.xlabel("Czas (s)")
-    plt.ylabel("Amplituda")
-    plt.legend()
-    plt.grid()
-    plt.tight_layout()
-
-    # Wyświetlenie wykresu
-    plt.show()
-    """
-
     experiment.run()
