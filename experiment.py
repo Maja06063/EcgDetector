@@ -52,7 +52,7 @@ class Experiment:
 
         if self.FLAG_IMAGE:
             cif.fit(self.dataset[self.EXPERIMENTAL_RABBIT_ID], self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST)
-            characteristic_values_list = cvf.predict(self.dataset)
+            characteristic_values_list = cif.predict(self.dataset)
 
         else:
             cvf.fit(self.dataset[self.EXPERIMENTAL_RABBIT_ID], self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST)
