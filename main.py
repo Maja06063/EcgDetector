@@ -13,6 +13,7 @@ if __name__ == "__main__":
     # Parametry wywołania:
     parser = argparse.ArgumentParser(description="klasyfikacja EKG pacjentów z bazy MIT-BIH.")
     parser.add_argument('-i', '--image', action='store_true', help="użyj ekstrakcji cech z obrazu zamiast danych od czasu.")
+    parser.add_argument('-r', '--reference', action='store_true', help="algorytm referencyjny.")
     parser.add_argument('-n', '--normalize', action='store_true', help="normalizuj wartości na wykresach.")
     parser.add_argument('-k', '--knn', type=int, default=5, help="parametr k dla algorytmu k-NN.")
     parser.add_argument('-v', '--verbose', action='store_true', help="więcej komunikatów tekstowych.")
@@ -22,6 +23,7 @@ if __name__ == "__main__":
     records_files = glob.glob("./dataset/*.hea")
 
     experiment.FLAG_IMAGE = args.image
+    experiment.FLAG_REFERENCE = args.reference
     experiment.FLAG_NORMALIZE = args.normalize
     experiment.FLAG_K = args.knn
     if args.verbose:

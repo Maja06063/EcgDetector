@@ -1,6 +1,7 @@
 from characteristic_images_finder import CharacteristicImagesFinder
 from characteristic_values_finder import CharacteristicValuesFinder
 from health_table import HEALTH_IDS_LIST
+from reference import Reference
 from sklearn.model_selection import cross_val_score, KFold
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -8,14 +9,11 @@ import logging
 import numpy as np
 import wfdb
 
-#import tensorflow as tf
-#from tensorflow.keras.models import Sequential
-#from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dense, Flatten, Dropout
-
 class Experiment:
 
     EXPERIMENTAL_RABBIT_ID = 100
     FLAG_IMAGE = False
+    FLAG_REFERENCE = False
     FLAG_NORMALIZE = False
     FLAG_K = 0
 
@@ -47,12 +45,17 @@ class Experiment:
         knn = KNeighborsClassifier(n_neighbors=self.FLAG_K)
         cvf = CharacteristicValuesFinder(self.FLAG_NORMALIZE, plot_number)
         cif = CharacteristicImagesFinder(self.FLAG_NORMALIZE, plot_number)
+        ref = Reference(self.FLAG_NORMALIZE, plot_number)
 
         print("\nEkstrakcja cech...\n")
 
         if self.FLAG_IMAGE:
             cif.fit(self.dataset[self.EXPERIMENTAL_RABBIT_ID], self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST)
             characteristic_values_list = cif.predict(self.dataset)
+
+        elif self.FLAG_REFERENCE:
+            ref.fit(self.dataset[self.EXPERIMENTAL_RABBIT_ID], self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST)
+            characteristic_values_list = ref.predict(self.dataset)
 
         else:
             cvf.fit(self.dataset[self.EXPERIMENTAL_RABBIT_ID], self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST)
