@@ -9,15 +9,36 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class CharacteristicValuesFinder(CommonFinder):
-
+    """
+    Klasa CharacteristicValuesFinder to najbardziej podstawowa wersja algorytmu ekstrakcji cech z
+    danych EKG. Posiada metody fit i predict zgodne z sklearn.
+    """
     def __init__(self, _ifNormalize: bool, _plot_number: int):
+        """
+        Konstruktor służący do zapisania wartości parametrów oraz zbudowania sieci neuronowej.
 
+        Parametry:
+        1. _ifNormalize - czy normalizować odcinki okresów EKG (aby były od 0 do 1),
+        2. _plot_number - nr wykresów do wyświetlenia (0 - brak).
+
+        Funkcja nie zwraca żadnych wartości.
+        """
         self.nn = MLPClassifier(hidden_layer_sizes=(100,), max_iter=1000)
         self.ifNormalize = _ifNormalize
         self.plot_number = _plot_number
 
     def fit(self, x_train: dict, y_train: bool):
+        """
+        Metoda fit służy do nauki ekstraktora, w jaki sposób ma wyznaczać cechy odcinków EKG
+        pacjentów.
 
+        Parametry:
+        1. x_train - pacjent treningowy,
+        2. y_train - stan zdrowia pacjenta (najlepiej podać zdrowego, z równymi przebiegami).
+
+        Zwraca:
+        1. self.nn - nauczona siec neuronowa.
+        """
         if not y_train:
             logging.warning("Uczenie ekstrakcji powinno przebiegać na zdrowym pacjencie")
 
@@ -54,7 +75,15 @@ class CharacteristicValuesFinder(CommonFinder):
         return self.nn.fit(parts, labels)
 
     def predict(self, x_test: dict) -> list:
+        """
+        Metoda predict służy do przeprowadzenie ekstrakcji cech z pacjentów.
 
+        Parametry:
+        1. x_test - słownik pacjentów (klucz to id, wartość to przebieg EKG).
+
+        Zwraca:
+        1. characteristic_values_list - lista wyekstraktowanych cech ze wszytkich pacjentów.
+        """
         characteristic_values_list = []
 
         for signal_id, voltage_signal in x_test.items():

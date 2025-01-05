@@ -10,15 +10,25 @@ import numpy as np
 import wfdb
 
 class Experiment:
-
+    """
+    Klasa Experiment zawiera metody służące do wczytania danych z plików bazy MIT-BIH oraz
+    uruchomienia protokołu eksperymentu.
+    """
     EXPERIMENTAL_RABBIT_ID = 100
     FLAG_IMAGE = False
     FLAG_REFERENCE = False
     FLAG_NORMALIZE = False
     FLAG_K = 0
 
-    def read_dataset(self, records_files) -> None:
+    def read_dataset(self, records_files: list) -> None:
+        """
+        Metoda read_dataset służy do wczytania danych z podanych blików bazy w formacie wfdb.
 
+        Parametry:
+        1. records_files - lista zawierająca nazwy plików do wczytania.
+
+        Funkcja nie zwraca żadnych wartości.
+        """
         self.dataset = {}
         print("\nWczytywanie pacjentów...\n")
 
@@ -39,7 +49,14 @@ class Experiment:
         self.dataset = {key: self.dataset[key] for key in sorted(self.dataset)}
 
     def run(self, plot_number: int) -> None:
+        """
+        Metoda run służy do uruchomienia protokołu eksperymentalnego.
 
+        Parametry:
+        1. plot_number - numer wykresów, który wyświetlić podczas trwania algorytmów (0 - brak).
+
+        Funkcja nie zwraca żadnych wartości.
+        """
         # Lista na wyniki ekstrakcji i klasyfikatory:
         characteristic_values_list = []
         knn = KNeighborsClassifier(n_neighbors=self.FLAG_K)
@@ -49,16 +66,28 @@ class Experiment:
 
         print("\nEkstrakcja cech...\n")
 
+        # Przetwarzanie z obrazu z danych 2-wymiarowych:
         if self.FLAG_IMAGE:
-            cif.fit(self.dataset[self.EXPERIMENTAL_RABBIT_ID], self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST)
+            cif.fit(
+                self.dataset[self.EXPERIMENTAL_RABBIT_ID],
+                self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST
+            )
             characteristic_values_list = cif.predict(self.dataset)
 
+        # Algorytm referencyjny:
         elif self.FLAG_REFERENCE:
-            ref.fit(self.dataset[self.EXPERIMENTAL_RABBIT_ID], self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST)
+            ref.fit(
+                self.dataset[self.EXPERIMENTAL_RABBIT_ID],
+                self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST
+            )
             characteristic_values_list = ref.predict(self.dataset)
 
+        # Przetwarzanie z danych 1-wymiarowych (algorytm podstawowy:)
         else:
-            cvf.fit(self.dataset[self.EXPERIMENTAL_RABBIT_ID], self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST)
+            cvf.fit(
+                self.dataset[self.EXPERIMENTAL_RABBIT_ID],
+                self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST
+            )
             characteristic_values_list = cvf.predict(self.dataset)
 
         print("\nEkstrakcja cech zakończona.")
@@ -77,3 +106,5 @@ class Experiment:
         print(f"Wyniki walidacji krzyżowej: {scores}")
         print(f"Średnia dokładność: {np.mean(scores):.2f}")
         print(f"Odchylenie standardowe: {np.std(scores):.2f}")
+
+        #TODO T-studenta

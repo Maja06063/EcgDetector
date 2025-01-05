@@ -1,7 +1,16 @@
 class CharacteristicValues:
-
+    """
+    Klasa CharacteristicValues agreguje dane wyektraktowane z przebiegu EKG jednego pacjenta.
+    """
     def __init__(self, patient_id: int) -> None:
+        """
+        Konstruktor służący do inicjalizacji danych pacjenta o danym id.
 
+        Parametry:
+        1. patient_id - id pacjenta.
+
+        Funkcja nie zwraca żadnych wartości.
+        """
         self.id         = patient_id
         self.A_P        = 0.0
         self.A_QRS      = 0.0
@@ -14,7 +23,15 @@ class CharacteristicValues:
         self.sick       = False
 
     def to_list(self) -> list:
+        """
+        Funkcja to_list służy do zwrócenia wszystkich istotnych danych podczas klasyfikacji w
+        formie listy.
 
+        Funkcja nie bierze żadnych parametrów.
+
+        Zwraca:
+        1. Lista zawierająca dane istotne do klasyfikacji (cechy).
+        """
         return [
             self.A_P,
             self.A_QRS,
@@ -27,11 +44,28 @@ class CharacteristicValues:
         ]
 
     def is_sick(self) -> bool:
+        """
+        Metoda is_sick służy do weryfikacji, czy pacjent jest zdrowy czy chory.
 
+        Funkcja nie bierze żadnych parametrów.
+
+        Zwraca:
+        - True - jeśli pacjent chory,
+        - False - jeśli pacjent zdrowy.
+        """
         return self.sick
 
     def to_string(self) -> str:
+        """
+        Metoda to_string służy do konwersji danych wyekstraktowanych z pacjenta na string w celu
+        ich wyświetlenia.
 
+        Funkcja nie bierze żadnych parametrów.
+
+        Zwraca:
+        1. String zawierający informacje wyektraktowane z pacjenta w formie czytelnej dla
+        człowieka.
+        """
         return f"""
         ******************************
         Pacjent nr {self.id}

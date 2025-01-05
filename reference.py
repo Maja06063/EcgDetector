@@ -7,9 +7,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.utils import to_categorical
 
 import logging
-import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
 
 class Reference(CommonFinder):
 
