@@ -60,35 +60,39 @@ class Experiment:
         # Lista na wyniki ekstrakcji i klasyfikatory:
         characteristic_values_list = []
         knn = KNeighborsClassifier(n_neighbors=self.FLAG_K)
-        cvf = CharacteristicValuesFinder(self.FLAG_NORMALIZE, plot_number)
-        cif = CharacteristicImagesFinder(self.FLAG_NORMALIZE, plot_number)
-        ref = Reference(self.FLAG_NORMALIZE, plot_number)
+        t_student_filename = ""
 
         print("\nEkstrakcja cech...\n")
 
         # Przetwarzanie z obrazu z danych 2-wymiarowych:
         if self.FLAG_IMAGE:
+            cif = CharacteristicImagesFinder(self.FLAG_NORMALIZE, plot_number)
             cif.fit(
                 self.dataset[self.EXPERIMENTAL_RABBIT_ID],
                 self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST
             )
             characteristic_values_list = cif.predict(self.dataset)
+            t_student_filename = "image.t_student"
 
         # Algorytm referencyjny:
         elif self.FLAG_REFERENCE:
+            ref = Reference(self.FLAG_NORMALIZE, plot_number)
             ref.fit(
                 self.dataset[self.EXPERIMENTAL_RABBIT_ID],
                 self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST
             )
             characteristic_values_list = ref.predict(self.dataset)
+            t_student_filename = "reference.t_student"
 
         # Przetwarzanie z danych 1-wymiarowych (algorytm podstawowy:)
         else:
+            cvf = CharacteristicValuesFinder(self.FLAG_NORMALIZE, plot_number)
             cvf.fit(
                 self.dataset[self.EXPERIMENTAL_RABBIT_ID],
                 self.EXPERIMENTAL_RABBIT_ID in HEALTH_IDS_LIST
             )
             characteristic_values_list = cvf.predict(self.dataset)
+            t_student_filename = "normal.t_student"
 
         print("\nEkstrakcja cech zakończona.")
         print("Klasyfikacja na podstawie cech...\n")
@@ -103,8 +107,10 @@ class Experiment:
             scoring='accuracy'
         )
 
+        # Printujemy wyniki:
         print(f"Wyniki walidacji krzyżowej: {scores}")
         print(f"Średnia dokładność: {np.mean(scores):.2f}")
         print(f"Odchylenie standardowe: {np.std(scores):.2f}")
 
-        #TODO T-studenta
+        # Zapisujemy dane do testu t_studenta:
+        np.savetxt(t_student_filename, scores, fmt="%s")

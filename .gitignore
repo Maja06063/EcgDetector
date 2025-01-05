@@ -172,3 +172,4 @@ cython_debug/
 
 dataset
 .DS_Store
+*.t_student
