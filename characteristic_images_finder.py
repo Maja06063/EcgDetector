@@ -55,6 +55,8 @@ class CharacteristicImagesFinder(CommonFinder):
         rounded_list = np.rint(rescaled_list).astype(int)
 
         # Tworzymy macierz 2 wymiarową:
+        # Budujemy macierz samych zer, a potem zamieniamy zera na 1 tam, gdzie występują wartości
+        # zaokrąglonej funkcji rounded_list.
         matrix = np.zeros((self.IMAGE_H, self.IMAGE_W), dtype=int)
         matrix[rounded_list, np.arange(self.IMAGE_W)] = 1
 

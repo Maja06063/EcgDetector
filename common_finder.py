@@ -35,7 +35,7 @@ class CommonFinder:
     def calculate_fft(self, voltage_signal: list, signal_id: int) -> tuple:
         """
         Metoda calculate_fft wylicza transformatę fouriera i znajduje w niej najbardziej znaczącą
-        częstotliwość oraz szerokość pasma (od jakiej do jakiej częstotliwości coś się dzieje na
+        częstotliwość ( x dla największego peaka) oraz szerokość pasma (od jakiej do jakiej częstotliwości coś się dzieje na
         wykresie).
 
         Parametry:
@@ -51,7 +51,7 @@ class CommonFinder:
         fft_values = np.fft.fft(voltage_signal)
         fft_freqs = np.fft.fftfreq(N, d=1/self.SAMPLING_FREQ)
 
-        # Wartości FFT dla pozytywnych częstotliwości
+        # Wartości FFT dla dodatnich częstotliwości (po prostu dzielimy na pół)
         positive_freqs = fft_freqs[:N // 2]
         positive_fft_values = np.abs(fft_values[:N // 2])
 
@@ -75,11 +75,11 @@ class CommonFinder:
         if self.plot_number == 1:
             self.time_fft_plot(voltage_signal, positive_freqs, positive_fft_values, signal_id)
 
-        # Znalezienie największego piku
+        # Znalezienie największego piku W FFT(Transformacie Fouriera)
         peak_index = np.argmax(positive_fft_values)  # Indeks największego piku
         peak_frequency = positive_freqs[peak_index]  # Częstotliwość największego piku
 
-        # Szerokość pasma
+        # Znalezienie Szerokości pasma
         band_threshold = 0.1
         bandwidth_indices = np.where(positive_fft_values >= band_threshold)[0]
         bandwidth_start = positive_freqs[bandwidth_indices[0]]  # Początek pasma
@@ -91,7 +91,7 @@ class CommonFinder:
     def analyze_peaks(self, period: list, part_begin_idx: int) -> tuple:
         """
         Metoda analyze_peaks służy do analizowania odcinka pomiaru EKG. Wyszukuje największy peak
-        oraz liczy jego amplitudę i czas trwania.
+        w sygnale czasowym oraz liczy jego amplitudę i czas trwania.
 
         Parametry:
         1. period - cały jeden okres EKG,
@@ -101,13 +101,12 @@ class CommonFinder:
         1. max_peak_height - największa wysokość peaku,
         2. max_peak_width - największa szerokość peaku.
         """
-        this_part = self.add_padding(period, part_begin_idx)
+        this_part = self.add_padding(period, part_begin_idx)#dopełnienie 0, tak aby mieć stałą długość odcinka
 
         peaks, properties = find_peaks(this_part, height=-1)  # height=-1 znajdzie wszystkie peaki
         heights = properties['peak_heights']  # Wysokości peaków
 
-        #print(heights)
-        # Znajdź indeks największego peak'u
+        # Znajdź indeks( x czas wystąpienia) największego peak'u
         try:
             max_peak_idx = np.argmax(heights)
             max_peak = peaks[max_peak_idx]

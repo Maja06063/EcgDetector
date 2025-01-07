@@ -23,9 +23,9 @@ class CharacteristicValuesFinder(CommonFinder):
 
         Funkcja nie zwraca żadnych wartości.
         """
-        self.nn = MLPClassifier(hidden_layer_sizes=(100,), max_iter=1000)
-        self.ifNormalize = _ifNormalize
-        self.plot_number = _plot_number
+        self.nn = MLPClassifier(hidden_layer_sizes=(100,), max_iter=1000)# budowa sieci neuronowej
+        self.ifNormalize = _ifNormalize #czy_normalizacja
+        self.plot_number = _plot_number #nr wykresu
 
     def fit(self, x_train: dict, y_train: bool):
         """
@@ -46,8 +46,9 @@ class CharacteristicValuesFinder(CommonFinder):
         labels = [] # Tutaj trafią etykiety (klasy) tych odcinków.
 
         # Podział sygnału na okresy
-        peaks, _ = find_peaks(x_train, prominence=1) # peaks zawiera granicę okresów
-        periods = [x_train[peaks[i]:peaks[i+1]] for i in range(len(peaks)-1)]
+        peaks, _ = find_peaks(x_train, prominence=1) # peaks zawiera granicę okresów ZNALEZIENIE PEAKÓW
+        #parametr prominence aby wykluczać szumy, zeby nie byly brane jako peaky
+        periods = [x_train[peaks[i]:peaks[i+1]] for i in range(len(peaks)-1)] #DZIELENIE NA OKRESY
         # periods to lista list. Każdy jej element to jeden okres (a okres to lista danych
         # liczbowych).
 
@@ -69,7 +70,7 @@ class CharacteristicValuesFinder(CommonFinder):
             t_part = period[int(0.05*period_len):int(0.4*period_len)]
             p_part = period[int(0.67*period_len):int(0.85*period_len)]
 
-            # Dodajemy do parts zinterpolowany odcinek danych (aby jego długość była zawsze taka
+            # Dodajemy do parts zinterpolowany(zeskalowany) odcinek danych (aby jego długość była zawsze taka
             # sama). Do labels dodajemy informację, że jest to odcinek QRS.
             parts.append(np.interp(range(self.PART_LEN), range(len(qrs_part)), qrs_part))
             labels.append(self.QRS)
@@ -148,6 +149,7 @@ class CharacteristicValuesFinder(CommonFinder):
                     parts.append(self.add_padding(period, i))
 
                 # Przeprowadzamy predykcję odcinków za pomocą nauczonej wcześniej sieci neuronowej.
+                #TUTAJ SIEĆ NEURONOWA OKREŚLA KTÓRY ODCINEK JEST QRS, T I P
                 # Używamy predict_proba aby dostać prawdopodobieństwo danej etykiety w danym
                 # odcinku EKG. Następnie argmaxem wyłaniamy najbardziej prawdopodobny odcinek dla
                 # każdej etykiety.
